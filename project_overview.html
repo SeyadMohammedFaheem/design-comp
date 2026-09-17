@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Forma AI — Project Documentation & Executive Overview</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+    @page {
+      size: A4;
+      margin: 12mm 14mm 12mm 14mm;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: #18181b;
+      background: #ffffff;
+      line-height: 1.42;
+      font-size: 11.5px;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    .doc-container {
+      max-width: 100%;
+      margin: 0 auto;
+    }
+
+    /* Header */
+    .doc-header {
+      border-bottom: 2px solid #18181b;
+      padding-bottom: 10px;
+      margin-bottom: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .brand-title {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: #18181b;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand-badge {
+      display: inline-block;
+      background: #18181b;
+      color: #ffffff;
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 2px 7px;
+      border-radius: 4px;
+      letter-spacing: 0.05em;
+    }
+
+    .doc-meta {
+      text-align: right;
+      font-size: 10.5px;
+      color: #71717a;
+    }
+
+    .doc-meta strong {
+      color: #18181b;
+    }
+
+    /* Live Link Banner */
+    .link-banner {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-left: 4px solid #2563eb;
+      border-radius: 6px;
+      padding: 10px 14px;
+      margin-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .link-info {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+
+    .link-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: #2563eb;
+      letter-spacing: 0.04em;
+    }
+
+    .link-url {
+      font-size: 13px;
+      font-weight: 700;
+      color: #18181b;
+      text-decoration: none;
+    }
+
+    .link-badge {
+      background: #eff6ff;
+      color: #2563eb;
+      border: 1px solid #bfdbfe;
+      font-size: 10.5px;
+      font-weight: 600;
+      padding: 3px 9px;
+      border-radius: 999px;
+    }
+
+    /* Section Styling */
+    .section {
+      margin-bottom: 14px;
+    }
+
+    .section-title {
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      color: #18181b;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-transform: uppercase;
+    }
+
+    .section-title::before {
+      content: "";
+      display: inline-block;
+      width: 4px;
+      height: 12px;
+      background: #18181b;
+      border-radius: 2px;
+    }
+
+    p {
+      color: #3f3f46;
+      margin-bottom: 6px;
+    }
+
+    /* Grid Columns */
+    .pillar-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin: 8px 0 12px;
+    }
+
+    .pillar-card {
+      background: #fafafa;
+      border: 1px solid #e4e4e7;
+      border-radius: 6px;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .pillar-num {
+      font-size: 9px;
+      font-weight: 700;
+      color: #2563eb;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .pillar-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #18181b;
+    }
+
+    .pillar-desc {
+      font-size: 10.5px;
+      color: #52525b;
+      line-height: 1.4;
+    }
+
+    .pillar-bullets {
+      margin-top: 4px;
+      padding-left: 14px;
+      font-size: 10.5px;
+      color: #52525b;
+    }
+
+    .pillar-bullets li {
+      margin-bottom: 2px;
+    }
+
+    /* Table */
+    .spec-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 8px 0 12px;
+      font-size: 11px;
+    }
+
+    .spec-table th {
+      background: #f4f4f5;
+      color: #18181b;
+      text-align: left;
+      padding: 6px 10px;
+      font-weight: 700;
+      border: 1px solid #e4e4e7;
+    }
+
+    .spec-table td {
+      padding: 6px 10px;
+      border: 1px solid #e4e4e7;
+      color: #3f3f46;
+    }
+
+    .spec-table tr:nth-child(even) td {
+      background: #fafafa;
+    }
+
+    /* Callout Box */
+    .callout {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      padding: 10px 12px;
+      margin-top: 6px;
+    }
+
+    .callout strong {
+      color: #18181b;
+    }
+
+    /* Footer */
+    .doc-footer {
+      border-top: 1px solid #e4e4e7;
+      padding-top: 8px;
+      margin-top: 12px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 10px;
+      color: #a1a1aa;
+    }
+
+    .doc-footer a {
+      color: #2563eb;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="doc-container">
+    <!-- Header -->
+    <header class="doc-header">
+      <div>
+        <div class="brand-title">
+          FORMA <span style="font-weight: 400; color: #71717a;">Copilot</span>
+          <span class="brand-badge">UI Prototype</span>
+        </div>
+        <div style="font-size: 11px; color: #71717a; margin-top: 3px;">Minimal AI Design Copilot for Product & UX Teams</div>
+      </div>
+      <div class="doc-meta">
+        <div><strong>Version:</strong> 1.0.0 (Minimal Light)</div>
+        <div><strong>Date:</strong> September 2026</div>
+      </div>
+    </header>
+
+    <!-- Prominent Live Link Banner -->
+    <div class="link-banner">
+      <div class="link-info">
+        <span class="link-label">Live Cloud Prototype</span>
+        <a class="link-url" href="https://design-comp.vercel.app/" target="_blank">https://design-comp.vercel.app/</a>
+      </div>
+      <span class="link-badge">Active Production Deployment</span>
+    </div>
+
+    <!-- Executive Summary -->
+    <section class="section">
+      <h2 class="section-title">Executive Summary</h2>
+      <p>
+        <strong>Forma</strong> is an AI design copilot prototype built for product designers, UX researchers, and engineering teams. It bridges natural-language design prompts, context-aware microcopy generation, and qualitative usability feedback synthesis into a single unified workflow — styled with a crisp, Swiss-inspired <strong>minimal light theme</strong>.
+      </p>
+      <p>
+        By eliminating interface bloat and cognitive friction, Forma enables teams to brainstorm layouts, calibrate copy tone, and transform user test friction notes into prioritized design solutions.
+      </p>
+    </section>
+
+    <!-- Core Pillars Grid -->
+    <section class="section">
+      <h2 class="section-title">Core AI Design Capabilities</h2>
+      <div class="pillar-grid">
+        <!-- Pillar 1 -->
+        <div class="pillar-card">
+          <span class="pillar-num">Pillar 1</span>
+          <div class="pillar-title">Layout Brainstormer</div>
+          <div class="pillar-desc">Converts interface prompts into structured, responsive wireframes.</div>
+          <ul class="pillar-bullets">
+            <li><strong>Archetype Presets:</strong> SaaS Analytics, E-Commerce PDP, Mobile Banking, and Onboarding Wizard.</li>
+            <li><strong>Multi-Device Preview:</strong> 1-click toggle between Desktop (980px) and Mobile (380px) viewports.</li>
+            <li><strong>Modular Blocks:</strong> Navbars, KPI metric cards, telemetry sparklines, and activity feeds.</li>
+          </ul>
+        </div>
+
+        <!-- Pillar 2 -->
+        <div class="pillar-card">
+          <span class="pillar-num">Pillar 2</span>
+          <div class="pillar-title">UI Copy Generator</div>
+          <div class="pillar-desc">Crafts microcopy tailored to specific component constraints and brand voice.</div>
+          <ul class="pillar-bullets">
+            <li><strong>Targeting:</strong> Call to Action (CTA) buttons, Hero Headlines, Empty States, and Error Alerts.</li>
+            <li><strong>Tone Controls:</strong> Minimal & Direct, Playful & Friendly, and Enterprise Trust.</li>
+            <li><strong>Live Preview:</strong> Real-time in-context component rendering with 1-click copy action.</li>
+          </ul>
+        </div>
+
+        <!-- Pillar 3 -->
+        <div class="pillar-card">
+          <span class="pillar-num">Pillar 3</span>
+          <div class="pillar-title">Usability Synthesizer</div>
+          <div class="pillar-desc">Ingests raw feedback transcripts and clusters friction points into prioritized fixes.</div>
+          <ul class="pillar-bullets">
+            <li><strong>Metrics Engine:</strong> Quantified Friction Score (0-100) and Sentiment Polarity (% breakdown).</li>
+            <li><strong>Evidence Extraction:</strong> Highlights user verbatim quotes and friction frequency.</li>
+            <li><strong>Design Backlog:</strong> Compiles actionable recommendations ready for product delivery.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Technical Architecture & Design Principles -->
+    <section class="section">
+      <h2 class="section-title">Design Philosophy & Architecture</h2>
+      <table class="spec-table">
+        <thead>
+          <tr>
+            <th style="width: 26%;">Design Principle</th>
+            <th style="width: 36%;">Technical Implementation</th>
+            <th style="width: 38%;">User & Team Benefit</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Minimal Light Theme</strong></td>
+            <td>Pure #ffffff cards, subtle #e4e4e7 borders, #18181b onyx typography.</td>
+            <td>Zero visual fatigue, high contrast, distraction-free focus on interface structure.</td>
+          </tr>
+          <tr>
+            <td><strong>Self-Contained Engine</strong></td>
+            <td>Zero external asset dependencies; embedded responsive styles and logic.</td>
+            <td>Works universally online, offline, and across all browsers without server setup.</td>
+          </tr>
+          <tr>
+            <td><strong>Instant Feedback Loop</strong></td>
+            <td>Pre-calculated heuristics and state management with zero latency.</td>
+            <td>Sub-millisecond switching between layouts, tones, and usability case studies.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Project Links & Repositories -->
+    <section class="section">
+      <h2 class="section-title">Project Links & Repository Access</h2>
+      <div class="callout">
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <div>
+            <strong>Live Web Prototype:</strong> 
+            <a href="https://design-comp.vercel.app/" target="_blank" style="color: #2563eb; text-decoration: none; font-weight: 600;">
+              https://design-comp.vercel.app/
+            </a>
+          </div>
+          <div>
+            <strong>GitHub Repository:</strong> 
+            <a href="https://github.com/SeyadMohammedFaheem/design-comp" target="_blank" style="color: #2563eb; text-decoration: none; font-weight: 600;">
+              https://github.com/SeyadMohammedFaheem/design-comp
+            </a>
+          </div>
+          <div style="font-size: 10px; color: #71717a; margin-top: 2px;">
+            Continuous deployment enabled via Vercel on push to the GitHub main branch.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="doc-footer">
+      <div>Forma AI Prototype &copy; 2026 Seyad Mohammed Faheem</div>
+      <div>Documentation generated for project submission & overview</div>
+    </footer>
+  </div>
+</body>
+</html>
