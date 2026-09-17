@@ -1,0 +1,15 @@
+{
+  "name": "forma-ai",
+  "version": "1.0.0",
+  "description": "Minimal Light AI Prototype for Layout Brainstorming, UI Copy Generation, and Usability Feedback Synthesis",
+  "main": "index.html",
+  "scripts": {
+    "dev": "vite --port 3000 --open",
+    "start": "vite --port 3000",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^5.4.2"
+  }
+}

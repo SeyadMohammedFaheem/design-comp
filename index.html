@@ -1,0 +1,1641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Forma — Minimal AI Design Copilot</title>
+  <meta name="description" content="A simple, minimal light UI prototype for brainstorming layouts, generating UI copy, and summarizing usability feedback.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ==========================================================================
+       FORMA — Minimal Light Theme UI Prototype Styles (Self-Contained)
+       ========================================================================== */
+    :root {
+      --bg-page: #fafafa;
+      --bg-card: #ffffff;
+      --bg-subtle: #f4f4f5;
+      --bg-hover: #ebebef;
+
+      --border-light: #f4f4f5;
+      --border: #e4e4e7;
+      --border-focus: #18181b;
+
+      --text-main: #18181b;
+      --text-muted: #71717a;
+      --text-sub: #a1a1aa;
+
+      --primary: #18181b;
+      --primary-hover: #27272a;
+      --accent: #2563eb;
+      --accent-light: #eff6ff;
+
+      --red: #ef4444;
+      --red-light: #fef2f2;
+      --emerald: #10b981;
+      --emerald-light: #ecfdf5;
+
+      --radius-sm: 6px;
+      --radius: 10px;
+      --radius-lg: 16px;
+      --radius-full: 9999px;
+
+      --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.03);
+      --shadow-frame: 0 12px 30px -10px rgba(0, 0, 0, 0.08);
+
+      --font: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font);
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .app {
+      max-width: 1200px;
+      margin: 0 auto;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* HEADER & NAVBAR */
+    .navbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 24px;
+      background: var(--bg-card);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 30;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand-badge {
+      width: 24px;
+      height: 24px;
+      background: var(--primary);
+      color: #fff;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+    }
+
+    .brand-title {
+      font-weight: 700;
+      font-size: 16px;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-tag {
+      font-size: 11px;
+      color: var(--text-muted);
+      background: var(--bg-subtle);
+      padding: 2px 6px;
+      border-radius: var(--radius-sm);
+      font-weight: 500;
+    }
+
+    .nav-tabs {
+      display: flex;
+      align-items: center;
+      background: var(--bg-subtle);
+      padding: 3px;
+      border-radius: var(--radius-sm);
+      gap: 2px;
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: none;
+      font-family: var(--font);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-muted);
+      padding: 6px 14px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .tab-btn:hover {
+      color: var(--text-main);
+    }
+
+    .tab-btn.active {
+      background: var(--bg-card);
+      color: var(--text-main);
+      font-weight: 600;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .theme-pill {
+      font-size: 12px;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+    }
+
+    /* CONTENT LAYOUT & VIEWS */
+    .content {
+      flex: 1;
+      padding: 24px;
+    }
+
+    .view {
+      display: none;
+      flex-direction: column;
+      gap: 20px;
+      animation: fadeIn 0.2s ease-out;
+    }
+
+    .view.active {
+      display: flex;
+    }
+
+    .view-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .view-header h2 {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .subtitle {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* Base Card */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* BUTTONS & INPUTS */
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      font-family: var(--font);
+      font-size: 13px;
+      font-weight: 600;
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: background 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+    }
+
+    .btn-primary.full-width {
+      width: 100%;
+    }
+
+    .btn-secondary {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      font-family: var(--font);
+      font-size: 12px;
+      font-weight: 500;
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .btn-secondary:hover {
+      background: var(--bg-subtle);
+      border-color: #d4d4d8;
+    }
+
+    .input-clean {
+      font-family: var(--font);
+      font-size: 13px;
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      outline: none;
+      background: var(--bg-card);
+      transition: border-color 0.15s ease;
+    }
+
+    .input-clean:focus {
+      border-color: var(--border-focus);
+    }
+
+    .search-box {
+      display: flex;
+      gap: 8px;
+    }
+
+    .search-box input {
+      flex: 1;
+    }
+
+    .quick-tags {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .tag-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-sub);
+      text-transform: uppercase;
+    }
+
+    .tag {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-family: var(--font);
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .tag:hover {
+      border-color: #d4d4d8;
+      color: var(--text-main);
+    }
+
+    .tag.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+
+    /* Device Switcher */
+    .device-switcher {
+      display: flex;
+      background: var(--bg-subtle);
+      padding: 2px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+    }
+
+    .device-btn {
+      background: transparent;
+      border: none;
+      font-family: var(--font);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-muted);
+      padding: 4px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .device-btn.active {
+      background: var(--bg-card);
+      color: var(--text-main);
+      font-weight: 600;
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* TAB 1: CANVAS PROTOTYPE FRAME */
+    .canvas-wrap {
+      display: flex;
+      justify-content: center;
+      padding: 10px 0 20px;
+    }
+
+    .canvas-frame {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-frame);
+      width: 100%;
+      transition: width 0.25s ease;
+      overflow: hidden;
+    }
+
+    .canvas-frame.desktop {
+      max-width: 980px;
+    }
+
+    .canvas-frame.mobile {
+      max-width: 380px;
+      border-radius: 28px;
+      border: 8px solid #18181b;
+    }
+
+    .frame-bar {
+      background: #f8fafc;
+      border-bottom: 1px solid var(--border);
+      padding: 8px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      user-select: none;
+    }
+
+    .canvas-frame.mobile .frame-bar {
+      background: #18181b;
+      color: #fff;
+      border-bottom: none;
+      padding: 6px 12px;
+    }
+
+    .dots {
+      display: flex;
+      gap: 5px;
+    }
+
+    .dots span {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #cbd5e1;
+    }
+
+    .dots span:nth-child(1) { background: #f87171; }
+    .dots span:nth-child(2) { background: #fbbf24; }
+    .dots span:nth-child(3) { background: #34d399; }
+
+    .canvas-frame.mobile .dots { display: none; }
+
+    .frame-bar .url {
+      font-size: 11px;
+      color: var(--text-muted);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 2px 14px;
+      border-radius: var(--radius-full);
+    }
+
+    .canvas-frame.mobile .url {
+      background: rgba(255, 255, 255, 0.15);
+      border: none;
+      color: #e4e4e7;
+    }
+
+    .frame-content {
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      background: var(--bg-card);
+      min-height: 480px;
+    }
+
+    /* UI Preview Component Blocks */
+    .ui-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-light);
+      padding-bottom: 12px;
+      font-size: 12px;
+    }
+
+    .ui-nav-links {
+      display: flex;
+      gap: 12px;
+      color: var(--text-muted);
+    }
+
+    .ui-hero {
+      padding: 24px 12px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .ui-hero h1 {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .ui-hero p {
+      font-size: 13px;
+      color: var(--text-muted);
+      max-width: 480px;
+    }
+
+    .ui-hero-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .ui-metrics-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+    }
+
+    .ui-stat {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      background: var(--bg-card);
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .ui-stat-label {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .ui-stat-num {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .ui-stat-badge {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--emerald);
+    }
+
+    .ui-chart-card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .ui-chart-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .ui-chart-svg {
+      width: 100%;
+      height: 90px;
+    }
+
+    .ui-feed {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 14px;
+    }
+
+    .ui-feed-title {
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .ui-feed-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+      border-bottom: 1px solid var(--border-light);
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .ui-feed-item:last-child {
+      border-bottom: none;
+    }
+
+    /* TAB 2: UI COPY GENERATOR STYLES */
+    .copy-layout {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 20px;
+    }
+
+    .copy-settings {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .pill-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .pill-btn {
+      background: var(--bg-subtle);
+      border: 1px solid transparent;
+      color: var(--text-muted);
+      font-family: var(--font);
+      font-size: 12px;
+      font-weight: 500;
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .pill-btn:hover {
+      background: var(--bg-hover);
+      color: var(--text-main);
+    }
+
+    .pill-btn.active {
+      background: var(--bg-card);
+      color: var(--text-main);
+      border-color: var(--border);
+      font-weight: 600;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .copy-results {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .results-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .copy-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      box-shadow: var(--shadow-sm);
+      transition: border-color 0.15s ease;
+    }
+
+    .copy-item:hover {
+      border-color: #cbd5e1;
+    }
+
+    .copy-item.active-preview {
+      border-color: var(--border-focus);
+    }
+
+    .copy-info {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .copy-text {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .copy-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .copy-actions {
+      display: flex;
+      gap: 6px;
+    }
+
+    .in-context-card {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .preview-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-sub);
+      text-transform: uppercase;
+    }
+
+    .in-context-box {
+      background: var(--bg-subtle);
+      border: 1px dashed var(--border);
+      border-radius: var(--radius-sm);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .preview-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* TAB 3: USABILITY FEEDBACK STYLES */
+    .usability-grid {
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      gap: 20px;
+    }
+
+    .feedback-input-card {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .card-header-simple {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .card-header-simple label {
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .sample-chips {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .feedback-textarea {
+      resize: vertical;
+      line-height: 1.6;
+      font-size: 12px;
+    }
+
+    .feedback-summary {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .metrics-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .metric-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .m-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .m-value {
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .m-note {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .text-red { color: var(--red); }
+    .text-emerald { color: var(--emerald); }
+
+    .section-title {
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .issues-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .issue-card {
+      padding: 10px 12px;
+      border-radius: var(--radius-sm);
+      background: var(--bg-subtle);
+      border-left: 3px solid var(--red);
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .issue-title {
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .issue-quote {
+      font-size: 12px;
+      font-style: italic;
+      color: var(--text-muted);
+    }
+
+    .recommendations-simple {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .rec-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 12px;
+      border-radius: var(--radius-sm);
+      background: var(--bg-subtle);
+      border-left: 3px solid var(--accent);
+    }
+
+    .rec-item-title {
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .rec-item-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* TOAST NOTIFICATION */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--primary);
+      color: #fff;
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      font-weight: 500;
+      box-shadow: var(--shadow-md);
+      display: none;
+      z-index: 100;
+    }
+
+    .toast.show {
+      display: block;
+      animation: fadeIn 0.15s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 860px) {
+      .copy-layout, .usability-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <!-- Clean Minimal Header -->
+    <header class="navbar">
+      <div class="brand">
+        <div class="brand-badge">✦</div>
+        <span class="brand-title">Forma</span>
+        <span class="brand-tag">UI Prototype</span>
+      </div>
+
+      <!-- Simple Nav Tabs -->
+      <nav class="nav-tabs">
+        <button class="tab-btn active" data-view="layouts">
+          <span>1. Layout Brainstormer</span>
+        </button>
+        <button class="tab-btn" data-view="copy">
+          <span>2. UI Copy Generator</span>
+        </button>
+        <button class="tab-btn" data-view="usability">
+          <span>3. Usability Feedback</span>
+        </button>
+      </nav>
+
+      <div class="nav-actions">
+        <span class="theme-pill">Light Theme</span>
+      </div>
+    </header>
+
+    <!-- Main Views Container -->
+    <main class="content">
+
+      <!-- ========================================== -->
+      <!-- TAB 1: LAYOUT BRAINSTORMER (Clean & Simple)-->
+      <!-- ========================================== -->
+      <section class="view active" id="view-layouts">
+        <div class="view-header">
+          <div>
+            <h2>Layout Brainstormer</h2>
+            <p class="subtitle">Enter an interface idea to preview wireframe and component compositions.</p>
+          </div>
+          <div class="device-switcher">
+            <button class="device-btn active" data-device="desktop">Desktop</button>
+            <button class="device-btn" data-device="mobile">Mobile</button>
+          </div>
+        </div>
+
+        <!-- Clean Prompt Bar -->
+        <div class="search-box">
+          <input 
+            type="text" 
+            id="layout-prompt" 
+            class="input-clean" 
+            value="SaaS Analytics Dashboard with KPI metric cards, line chart, and activity feed"
+            placeholder="Describe any screen layout..."
+          />
+          <button class="btn-primary" id="btn-run-layout">Generate</button>
+        </div>
+
+        <!-- Quick Suggestions -->
+        <div class="quick-tags">
+          <span class="tag-label">Presets:</span>
+          <button class="tag active" data-prompt="SaaS Analytics Dashboard with KPI metric cards, line chart, and activity feed">SaaS Analytics</button>
+          <button class="tag" data-prompt="Minimal E-commerce product detail page with image gallery, review rating, and sticky checkout">E-Commerce PDP</button>
+          <button class="tag" data-prompt="Mobile Banking app with card balance, quick send, and recent transactions">Mobile Banking</button>
+          <button class="tag" data-prompt="User onboarding 3-step setup wizard with permissions and progress bar">Onboarding Flow</button>
+        </div>
+
+        <!-- Minimal Layout Canvas Frame -->
+        <div class="canvas-wrap">
+          <div class="canvas-frame desktop" id="canvas-frame">
+            <div class="frame-bar">
+              <div class="dots"><span></span><span></span><span></span></div>
+              <div class="url">forma.design/preview</div>
+              <div></div>
+            </div>
+
+            <!-- Rendered Layout Prototype -->
+            <div class="frame-content" id="layout-preview">
+              <!-- Content generated dynamically -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- TAB 2: UI COPY GENERATOR (Clean & Simple) -->
+      <!-- ========================================== -->
+      <section class="view" id="view-copy">
+        <div class="view-header">
+          <div>
+            <h2>UI Copy Generator</h2>
+            <p class="subtitle">Generate clear, engaging microcopy tailored to your component and brand voice.</p>
+          </div>
+        </div>
+
+        <div class="copy-layout">
+          <!-- Left: Input Settings -->
+          <div class="copy-settings card">
+            <div class="field">
+              <label>UI Element</label>
+              <div class="pill-group">
+                <button class="pill-btn active" data-target="cta">Button / CTA</button>
+                <button class="pill-btn" data-target="hero">Hero Headline</button>
+                <button class="pill-btn" data-target="empty">Empty State</button>
+                <button class="pill-btn" data-target="error">Error Message</button>
+              </div>
+            </div>
+
+            <div class="field">
+              <label>Context / Purpose</label>
+              <textarea id="copy-context" class="input-clean" rows="3">14-day free trial signup for a modern SaaS tool. Reassure the user that no credit card is required.</textarea>
+            </div>
+
+            <div class="field">
+              <label>Tone</label>
+              <div class="pill-group">
+                <button class="pill-btn active" data-tone="direct">Minimal & Direct</button>
+                <button class="pill-btn" data-tone="friendly">Playful & Friendly</button>
+                <button class="pill-btn" data-tone="formal">Enterprise</button>
+              </div>
+            </div>
+
+            <button class="btn-primary full-width" id="btn-run-copy">Generate Copy</button>
+          </div>
+
+          <!-- Right: Generated Options -->
+          <div class="copy-results">
+            <div class="results-list" id="copy-cards-container">
+              <!-- Copy cards populated here -->
+            </div>
+
+            <!-- Live In-Context Mockup -->
+            <div class="card in-context-card">
+              <span class="preview-label">Live Preview</span>
+              <div class="in-context-box" id="copy-live-preview">
+                <button class="btn-primary" id="preview-cta-btn">Start 14-Day Free Trial</button>
+                <span class="preview-sub">No credit card required · Instant access</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- TAB 3: USABILITY FEEDBACK (Clean & Simple) -->
+      <!-- ========================================== -->
+      <section class="view" id="view-usability">
+        <div class="view-header">
+          <div>
+            <h2>Usability Feedback Synthesizer</h2>
+            <p class="subtitle">Summarize raw user feedback, identify friction points, and see prioritized design fixes.</p>
+          </div>
+        </div>
+
+        <div class="usability-grid">
+          <!-- Feedback Input Card -->
+          <div class="card feedback-input-card">
+            <div class="card-header-simple">
+              <label>User Testing Notes & Quotes</label>
+              <div class="sample-chips">
+                <span class="tag-label">Sample:</span>
+                <button class="tag active" data-sample="checkout">Checkout Study</button>
+                <button class="tag" data-sample="onboard">Onboarding Test</button>
+              </div>
+            </div>
+            <textarea id="feedback-input" class="input-clean feedback-textarea" rows="9"></textarea>
+            <button class="btn-primary full-width" id="btn-run-feedback">Summarize Feedback</button>
+          </div>
+
+          <!-- Feedback Summary Card -->
+          <div class="feedback-summary">
+            <!-- Metric Overview -->
+            <div class="metrics-row">
+              <div class="metric-card">
+                <span class="m-label">Friction Score</span>
+                <span class="m-value text-red" id="m-friction">68 / 100</span>
+                <span class="m-note">Moderate Friction</span>
+              </div>
+              <div class="metric-card">
+                <span class="m-label">Sentiment</span>
+                <span class="m-value text-emerald" id="m-sentiment">60% Negative</span>
+                <span class="m-note">Checkout hesitations</span>
+              </div>
+              <div class="metric-card">
+                <span class="m-label">Key Issues</span>
+                <span class="m-value" id="m-issues">3 Issues</span>
+                <span class="m-note">Require design updates</span>
+              </div>
+            </div>
+
+            <!-- Identified Pain Points -->
+            <div class="card">
+              <h3 class="section-title">Key Friction Points</h3>
+              <div class="issues-list" id="issues-container">
+                <!-- Issues populated here -->
+              </div>
+            </div>
+
+            <!-- Recommended Design Fixes -->
+            <div class="card">
+              <h3 class="section-title">Design Recommendations</h3>
+              <div class="recommendations-simple" id="recs-container">
+                <!-- Recommendations populated here -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Simple Toast -->
+    <div id="toast" class="toast">Copied to clipboard!</div>
+  </div>
+
+  <script>
+    // ==========================================================================
+    // DATA PRESETS
+    // ==========================================================================
+    const LAYOUT_PRESETS = {
+      saas: {
+        title: 'SaaS Analytics Dashboard',
+        html: `
+          <div class="ui-nav">
+            <strong>ApexAnalytics</strong>
+            <div class="ui-nav-links">
+              <span>Overview</span>
+              <span>Funnels</span>
+              <span>Cohorts</span>
+              <span>Settings</span>
+            </div>
+            <span style="font-weight: 600; color: #2563eb;">Alex (Pro)</span>
+          </div>
+
+          <div class="ui-hero" style="padding: 14px 0; text-align: left; align-items: flex-start;">
+            <h1 style="font-size: 18px;">Product Telemetry & Conversion Velocity</h1>
+            <p style="font-size: 12px;">Real-time event stream tracking 1.2M active user sessions.</p>
+          </div>
+
+          <div class="ui-metrics-row">
+            <div class="ui-stat">
+              <span class="ui-stat-label">Monthly Recurring Revenue</span>
+              <span class="ui-stat-num">$128,450</span>
+              <span class="ui-stat-badge">+14.2% this month</span>
+            </div>
+            <div class="ui-stat">
+              <span class="ui-stat-label">Active Retention (W4)</span>
+              <span class="ui-stat-num">64.8%</span>
+              <span class="ui-stat-badge">+3.1% vs baseline</span>
+            </div>
+            <div class="ui-stat">
+              <span class="ui-stat-label">Checkout Conversion</span>
+              <span class="ui-stat-num">4.2%</span>
+              <span class="ui-stat-badge" style="color: #71717a;">Within target range</span>
+            </div>
+          </div>
+
+          <div class="ui-chart-card">
+            <div class="ui-chart-head">
+              <span>Daily Active User Growth (30 Days)</span>
+              <span style="color: #2563eb; font-size: 11px;">Live Stream</span>
+            </div>
+            <svg class="ui-chart-svg" viewBox="0 0 400 90" fill="none">
+              <path d="M10 80 C 80 40, 150 70, 220 25 C 290 5, 340 30, 390 15" stroke="#18181b" stroke-width="2.5" fill="none"/>
+              <circle cx="220" cy="25" r="4" fill="#18181b"/>
+              <circle cx="390" cy="15" r="4" fill="#10b981"/>
+            </svg>
+          </div>
+
+          <div class="ui-feed">
+            <div class="ui-feed-title">Recent Audit Events</div>
+            <div class="ui-feed-item">
+              <span>Sarah K. exported weekly churn summary</span>
+              <span style="font-family: monospace;">14m ago</span>
+            </div>
+            <div class="ui-feed-item">
+              <span>Enterprise SSO policy updated by DevSec</span>
+              <span style="font-family: monospace;">1h ago</span>
+            </div>
+          </div>
+        `
+      },
+      ecommerce: {
+        title: 'Minimalist E-Commerce Product Page',
+        html: `
+          <div class="ui-nav">
+            <strong>Komorebi Objects</strong>
+            <div class="ui-nav-links">
+              <span>Apparel</span>
+              <span>Objects</span>
+              <span>Archive</span>
+            </div>
+            <span>Bag (2)</span>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: center; padding: 10px 0;">
+            <div style="background: #f4f4f5; height: 180px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #71717a; font-size: 13px;">
+              Product Image Preview
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <span style="font-size: 11px; text-transform: uppercase; color: #71717a; font-weight: 600;">Kyoto Craft Series</span>
+              <h1 style="font-size: 20px; font-weight: 700;">Cast Iron Kettle (0.9L)</h1>
+              <div style="font-size: 16px; font-weight: 700;">$180.00</div>
+              <p style="font-size: 12px; color: #71717a;">Handcrafted ironware with precision pour spout and heat-resistant walnut handle.</p>
+              <div style="display: flex; gap: 8px; margin-top: 6px;">
+                <button class="btn-primary" style="flex: 1;">Add to Cart</button>
+                <button class="btn-secondary">Wishlist</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="ui-feed">
+            <div class="ui-feed-title">Customer Feedback (4.9 / 5.0)</div>
+            <div class="ui-feed-item">
+              <span>"Exceptional balance and understated matte finish." — Elena</span>
+              <span>★★★★★</span>
+            </div>
+          </div>
+        `
+      },
+      mobileBanking: {
+        title: 'Mobile Banking Overview',
+        html: `
+          <div class="ui-hero" style="padding: 10px 0;">
+            <span style="font-size: 11px; color: #71717a;">Total Balance</span>
+            <div style="font-size: 30px; font-weight: 800; letter-spacing: -0.02em;">$24,850.20</div>
+            <div class="ui-hero-actions">
+              <button class="btn-primary" style="font-size: 11px; padding: 6px 14px;">Send Money</button>
+              <button class="btn-secondary" style="font-size: 11px; padding: 6px 14px;">Add Cash</button>
+            </div>
+          </div>
+
+          <div class="ui-metrics-row" style="grid-template-columns: 1fr 1fr;">
+            <div class="ui-stat">
+              <span class="ui-stat-label">Emergency Vault</span>
+              <span class="ui-stat-num">$12,000</span>
+              <span class="ui-stat-badge">4.8% APY</span>
+            </div>
+            <div class="ui-stat">
+              <span class="ui-stat-label">Monthly Spend</span>
+              <span class="ui-stat-num">$1,420</span>
+              <span class="ui-stat-badge" style="color: #71717a;">$580 left</span>
+            </div>
+          </div>
+
+          <div class="ui-feed">
+            <div class="ui-feed-title">Recent Activity</div>
+            <div class="ui-feed-item">
+              <span>Coffee Roastery</span>
+              <span style="font-weight: 600;">-$4.50</span>
+            </div>
+            <div class="ui-feed-item">
+              <span>Direct Payout</span>
+              <span style="font-weight: 600; color: #10b981;">+$2,800.00</span>
+            </div>
+          </div>
+        `
+      },
+      onboarding: {
+        title: 'User Onboarding Flow',
+        html: `
+          <div class="ui-nav">
+            <strong>Forma Workspace</strong>
+            <span>Step 2 of 3</span>
+          </div>
+
+          <div class="ui-hero">
+            <h1>Connect Your Workspace</h1>
+            <p>Choose an identity provider to activate single sign-on and automated team invitations.</p>
+            <div style="display: flex; flex-direction: column; gap: 8px; width: 100%; max-width: 320px; margin-top: 10px;">
+              <button class="btn-primary">Continue with Google Workspace</button>
+              <button class="btn-secondary">Configure Custom SAML SSO</button>
+            </div>
+          </div>
+
+          <div class="ui-metrics-row" style="margin-top: 10px;">
+            <div class="ui-stat">
+              <span class="ui-stat-label">SOC2 Certified</span>
+              <span style="font-size: 12px; font-weight: 600;">Audited 2026</span>
+            </div>
+            <div class="ui-stat">
+              <span class="ui-stat-label">Encryption</span>
+              <span style="font-size: 12px; font-weight: 600;">AES-256 At Rest</span>
+            </div>
+          </div>
+        `
+      }
+    };
+
+    const COPY_DATA = {
+      cta: {
+        direct: [
+          { text: 'Start 14-Day Free Trial', sub: 'Clear, zero ambiguity, highest conversion' },
+          { text: 'Access Dashboard Free', sub: 'Immediate access with zero upfront barrier' },
+          { text: 'Explore the Platform', sub: 'Low commitment for initial evaluation' }
+        ],
+        friendly: [
+          { text: 'Take It for a Spin — Free!', sub: 'Playful, welcoming invitation' },
+          { text: 'Hop In (No Card Needed)', sub: 'Alleviates payment skepticism warmly' },
+          { text: 'Let’s Build Something Great', sub: 'Inspires creative confidence' }
+        ],
+        formal: [
+          { text: 'Initiate Enterprise Evaluation', sub: 'Suited for procurement and IT reviews' },
+          { text: 'Deploy Secure Proof of Concept', sub: 'Emphasizes enterprise compliance' },
+          { text: 'Request Dedicated Instance', sub: 'High-value account authorization' }
+        ]
+      },
+      hero: {
+        direct: [
+          { text: 'Turn raw data into clear product decisions.', sub: 'Focuses on direct outcome without buzzwords' },
+          { text: 'The analytics copilot for fast product teams.', sub: 'Clean category definition' },
+          { text: 'Measure what matters. Ship what works.', sub: 'Punchy, memorable cadence' }
+        ],
+        friendly: [
+          { text: 'Stop guessing why users drop off. Let’s ask the data.', sub: 'Conversational hook that sparks curiosity' },
+          { text: 'Analytics so clean, your spreadsheets will get jealous.', sub: 'Warm product manager humor' },
+          { text: 'Your team deserves better than blindfolded design.', sub: 'Relatable, encouraging tone' }
+        ],
+        formal: [
+          { text: 'Unified telemetry for mission-critical web applications.', sub: 'High technical authority' },
+          { text: 'Accelerate digital velocity with verified UX benchmarks.', sub: 'Boardroom-aligned executive focus' },
+          { text: 'Deterministic user intelligence at multi-million scale.', sub: 'Signals engineering robustness' }
+        ]
+      },
+      empty: {
+        direct: [
+          { text: 'No active prototypes. Tap Generate to begin.', sub: 'Shortest possible instruction' },
+          { text: 'Workspace is clean and ready for your first layout.', sub: 'Reframes blank state positively' }
+        ],
+        friendly: [
+          { text: 'A fresh blank canvas! What shall we build first?', sub: 'Warm, collaborative prompt' },
+          { text: 'Nothing here yet. Pick a preset above to see magic.', sub: 'Friendly guide for newcomers' }
+        ],
+        formal: [
+          { text: 'No configurations detected in current workspace.', sub: 'Neutral system state' },
+          { text: 'Initialize repository by selecting a design template.', sub: 'Structured compliance instruction' }
+        ]
+      },
+      error: {
+        direct: [
+          { text: 'Unable to reach server. Your work is saved locally.', sub: 'Reassures user of data safety' },
+          { text: 'Network connection paused. Click to retry.', sub: 'Clear recovery action' }
+        ],
+        friendly: [
+          { text: 'Whoops! We hit a brief bump. Tap retry to reconnect.', sub: 'Disarming, non-technical' },
+          { text: 'Looks like the Wi-Fi blinked. Don’t worry, your work is safe!', sub: 'Human empathy and reassurance' }
+        ],
+        formal: [
+          { text: 'Network handshake failed (HTTP 503). Retrying in 5s.', sub: 'Precise diagnostic notice' },
+          { text: 'Session timed out. Please authenticate your credentials.', sub: 'Security protocol specification' }
+        ]
+      }
+    };
+
+    const FEEDBACK_SAMPLES = {
+      checkout: `Participant 1: "I added the item to my bag, but when I reached checkout, I couldn't see shipping costs until after I typed my full address. That made me hesitate."
+Participant 2: "The 'Proceed' button was ambiguous. Does 'Proceed' mean submit payment or review my order? I almost abandoned."
+Participant 3: "On mobile Safari, the keyboard popped up and completely hid the 'Complete Purchase' button."
+Participant 4: "I wanted to use Apple Pay. Having to type a 16-digit card felt slow."
+Participant 5: "There are no security badges or return guarantees visible on the final step."`,
+
+      onboard: `Participant 1: "During sign up, you asked me for my company size and phone number before I even saw the app. Felt like too much friction."
+Participant 2: "The welcome screen just dropped me onto an empty page with no starter templates."
+Participant 3: "The copy on the cloud permission dialog felt intimidating and unclear."
+Participant 4: "I love the clean design, but please provide a 30-second interactive tour."`
+    };
+
+    // ==========================================================================
+    // INITIALIZATION & EVENT LOGIC
+    // ==========================================================================
+    function showToast(text) {
+      const toast = document.getElementById('toast');
+      if (!toast) return;
+      toast.textContent = text;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2000);
+    }
+
+    // Tabs
+    const tabs = document.querySelectorAll('.nav-tabs .tab-btn');
+    const views = document.querySelectorAll('.view');
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        views.forEach(v => v.classList.remove('active'));
+
+        tab.classList.add('active');
+        const targetView = document.getElementById('view-' + tab.dataset.view);
+        if (targetView) targetView.classList.add('active');
+      });
+    });
+
+    // Layout Module
+    const frame = document.getElementById('canvas-frame');
+    const preview = document.getElementById('layout-preview');
+    const promptInput = document.getElementById('layout-prompt');
+    const generateBtn = document.getElementById('btn-run-layout');
+    const deviceBtns = document.querySelectorAll('.device-btn');
+    const presetTags = document.querySelectorAll('.quick-tags .tag');
+
+    function renderPreset(key) {
+      const data = LAYOUT_PRESETS[key] || LAYOUT_PRESETS.saas;
+      if (preview) preview.innerHTML = data.html;
+    }
+
+    // Initial render
+    renderPreset('saas');
+
+    deviceBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        deviceBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        if (btn.dataset.device === 'mobile') {
+          frame.className = 'canvas-frame mobile';
+          renderPreset('mobileBanking');
+        } else {
+          frame.className = 'canvas-frame desktop';
+          renderPreset('saas');
+        }
+      });
+    });
+
+    presetTags.forEach((tag, idx) => {
+      tag.addEventListener('click', () => {
+        presetTags.forEach(t => t.classList.remove('active'));
+        tag.classList.add('active');
+
+        const prompt = tag.dataset.prompt;
+        if (promptInput) promptInput.value = prompt;
+
+        const keys = ['saas', 'ecommerce', 'mobileBanking', 'onboarding'];
+        renderPreset(keys[idx % keys.length]);
+        showToast('Switched layout: ' + tag.textContent);
+      });
+    });
+
+    if (generateBtn) {
+      generateBtn.addEventListener('click', () => {
+        const text = (promptInput.value || '').toLowerCase();
+        if (text.includes('e-commerce') || text.includes('shop') || text.includes('product')) {
+          renderPreset('ecommerce');
+        } else if (text.includes('bank') || text.includes('mobile') || text.includes('card')) {
+          renderPreset('mobileBanking');
+        } else if (text.includes('onboard') || text.includes('wizard')) {
+          renderPreset('onboarding');
+        } else {
+          renderPreset('saas');
+        }
+        showToast('Brainstormed layout updated!');
+      });
+    }
+
+    // Copy Module
+    const targetPills = document.querySelectorAll('#view-copy [data-target]');
+    const tonePills = document.querySelectorAll('#view-copy [data-tone]');
+    const contextInput = document.getElementById('copy-context');
+    const copyGenBtn = document.getElementById('btn-run-copy');
+    const copyContainer = document.getElementById('copy-cards-container');
+    const liveBox = document.getElementById('copy-live-preview');
+
+    let currentTarget = 'cta';
+    let currentTone = 'direct';
+
+    function updateLiveMockup(type, text) {
+      if (!liveBox) return;
+      if (type === 'cta') {
+        liveBox.innerHTML = `
+          <button class="btn-primary" style="padding: 10px 24px; font-size: 14px;">${text}</button>
+          <span class="preview-sub">No credit card required · Instant access</span>
+        `;
+      } else if (type === 'hero') {
+        liveBox.innerHTML = `
+          <h2 style="font-size: 22px; font-weight: 700; text-align: center; max-width: 480px; letter-spacing: -0.02em;">${text}</h2>
+          <span class="preview-sub">Empowering modern product teams with instant clarity.</span>
+        `;
+      } else if (type === 'empty') {
+        liveBox.innerHTML = `
+          <div style="font-size: 24px;">📂</div>
+          <strong style="font-size: 14px;">${text}</strong>
+          <span class="preview-sub">Start with a template or import existing work.</span>
+        `;
+      } else {
+        liveBox.innerHTML = `
+          <div style="background: #fef2f2; border: 1px solid #fecdd3; padding: 12px 16px; border-radius: 6px; display: flex; align-items: center; gap: 8px;">
+            <span>⚠️</span>
+            <span style="font-size: 13px; color: #b91c1c; font-weight: 600;">${text}</span>
+          </div>
+        `;
+      }
+    }
+
+    function renderCopyCards() {
+      const targetData = COPY_DATA[currentTarget] || COPY_DATA.cta;
+      const variants = targetData[currentTone] || targetData.direct;
+
+      if (!copyContainer) return;
+      copyContainer.innerHTML = '';
+
+      variants.forEach((v, idx) => {
+        const item = document.createElement('div');
+        item.className = 'copy-item' + (idx === 0 ? ' active-preview' : '');
+        item.innerHTML = `
+          <div class="copy-info">
+            <span class="copy-text">“${v.text}”</span>
+            <span class="copy-sub">${v.sub}</span>
+          </div>
+          <div class="copy-actions">
+            <button class="btn-secondary btn-use">Preview</button>
+            <button class="btn-secondary btn-copy">Copy</button>
+          </div>
+        `;
+
+        item.querySelector('.btn-use').addEventListener('click', () => {
+          document.querySelectorAll('.copy-item').forEach(i => i.classList.remove('active-preview'));
+          item.classList.add('active-preview');
+          updateLiveMockup(currentTarget, v.text);
+        });
+
+        item.querySelector('.btn-copy').addEventListener('click', () => {
+          navigator.clipboard.writeText(v.text);
+          showToast('Copied: "' + v.text + '"');
+        });
+
+        copyContainer.appendChild(item);
+      });
+
+      if (variants[0]) {
+        updateLiveMockup(currentTarget, variants[0].text);
+      }
+    }
+
+    targetPills.forEach(p => {
+      p.addEventListener('click', () => {
+        targetPills.forEach(pill => pill.classList.remove('active'));
+        p.classList.add('active');
+        currentTarget = p.dataset.target;
+
+        if (currentTarget === 'cta') {
+          contextInput.value = '14-day free trial signup for a modern SaaS tool. Reassure the user that no credit card is required.';
+        } else if (currentTarget === 'hero') {
+          contextInput.value = 'Hero headline for an intuitive product analytics dashboard that reduces user drop-off.';
+        } else if (currentTarget === 'empty') {
+          contextInput.value = 'Clean empty state for a design workspace when no files are open.';
+        } else {
+          contextInput.value = 'Inline warning alert when offline or unable to reach sync server.';
+        }
+
+        renderCopyCards();
+      });
+    });
+
+    tonePills.forEach(p => {
+      p.addEventListener('click', () => {
+        tonePills.forEach(pill => pill.classList.remove('active'));
+        p.classList.add('active');
+        currentTone = p.dataset.tone;
+        renderCopyCards();
+      });
+    });
+
+    if (copyGenBtn) {
+      copyGenBtn.addEventListener('click', () => {
+        renderCopyCards();
+        showToast('Generated fresh UI copy options!');
+      });
+    }
+
+    renderCopyCards();
+
+    // Usability Feedback Module
+    const fbInput = document.getElementById('feedback-input');
+    const sampleChips = document.querySelectorAll('.sample-chips .tag');
+    const fbRunBtn = document.getElementById('btn-run-feedback');
+    const issuesBox = document.getElementById('issues-container');
+    const recsBox = document.getElementById('recs-container');
+    const mFriction = document.getElementById('m-friction');
+    const mSentiment = document.getElementById('m-sentiment');
+    const mIssues = document.getElementById('m-issues');
+
+    function renderFeedbackReport(sampleKey) {
+      if (sampleKey === 'checkout') {
+        if (fbInput) fbInput.value = FEEDBACK_SAMPLES.checkout;
+        if (mFriction) mFriction.textContent = '68 / 100';
+        if (mSentiment) mSentiment.textContent = '60% Negative';
+        if (mIssues) mIssues.textContent = '3 Critical';
+
+        if (issuesBox) {
+          issuesBox.innerHTML = `
+            <div class="issue-card">
+              <span class="issue-title">Hidden Shipping Costs Until Final Step</span>
+              <span class="issue-quote">"I couldn't see shipping until I entered my full address... made me hesitate."</span>
+            </div>
+            <div class="issue-card">
+              <span class="issue-title">Ambiguous CTA ("Proceed" vs "Place Order")</span>
+              <span class="issue-quote">"Does 'Proceed' mean submit payment or review my order? I almost abandoned."</span>
+            </div>
+            <div class="issue-card">
+              <span class="issue-title">Mobile Keyboard Obscuring Confirmation Button</span>
+              <span class="issue-quote">"The credit card keyboard popped up and completely hid the purchase button."</span>
+            </div>
+          `;
+        }
+
+        if (recsBox) {
+          recsBox.innerHTML = `
+            <div class="rec-item">
+              <div>
+                <div class="rec-item-title">1. Split-Screen Order Summary</div>
+                <div class="rec-item-desc">Display real-time itemized shipping & taxes on right side of screen.</div>
+              </div>
+            </div>
+            <div class="rec-item">
+              <div>
+                <div class="rec-item-title">2. Rename CTA to "Review Order & Shipping"</div>
+                <div class="rec-item-desc">Removes premature financial commitment anxiety.</div>
+              </div>
+            </div>
+            <div class="rec-item">
+              <div>
+                <div class="rec-item-title">3. Add Apple Pay / Google Pay One-Tap Button</div>
+                <div class="rec-item-desc">Bypasses multi-field mobile checkout form completely.</div>
+              </div>
+            </div>
+          `;
+        }
+      } else {
+        if (fbInput) fbInput.value = FEEDBACK_SAMPLES.onboard;
+        if (mFriction) mFriction.textContent = '42 / 100';
+        if (mSentiment) mSentiment.textContent = '50% Neutral';
+        if (mIssues) mIssues.textContent = '2 Moderate';
+
+        if (issuesBox) {
+          issuesBox.innerHTML = `
+            <div class="issue-card">
+              <span class="issue-title">Premature Form Friction Before Value Discovery</span>
+              <span class="issue-quote">"Asked me for company size and phone number before I even saw the app."</span>
+            </div>
+            <div class="issue-card">
+              <span class="issue-title">Intimidating Cloud Permission Copy</span>
+              <span class="issue-quote">"The copy on the permission dialog felt intimidating and unclear."</span>
+            </div>
+          `;
+        }
+
+        if (recsBox) {
+          recsBox.innerHTML = `
+            <div class="rec-item">
+              <div>
+                <div class="rec-item-title">1. Move Optional Fields Post-Activation</div>
+                <div class="rec-item-desc">Let user experience core workspace before asking for CRM details.</div>
+              </div>
+            </div>
+            <div class="rec-item">
+              <div>
+                <div class="rec-item-title">2. Soften Permission Language</div>
+                <div class="rec-item-desc">Clarify read-only repository scope to defuse security concerns.</div>
+              </div>
+            </div>
+          `;
+        }
+      }
+    }
+
+    sampleChips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        sampleChips.forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        renderFeedbackReport(chip.dataset.sample);
+        showToast('Loaded ' + chip.textContent);
+      });
+    });
+
+    if (fbRunBtn) {
+      fbRunBtn.addEventListener('click', () => {
+        renderFeedbackReport('checkout');
+        showToast('Usability feedback synthesized!');
+      });
+    }
+
+    renderFeedbackReport('checkout');
+  </script>
+</body>
+</html>
